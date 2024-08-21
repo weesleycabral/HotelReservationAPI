@@ -1,11 +1,13 @@
 package com.hotel.api.services.Impl;
 
 import java.util.List;
+import java.time.LocalDate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hotel.api.dtos.EmailDTO;
 import com.hotel.api.entities.Reservation;
+import com.hotel.api.exceptions.RoomNotAvailableException;
 import com.hotel.api.repositories.ReservationRepository;
 import com.hotel.api.services.ReservationService;
 
@@ -17,12 +19,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
 
-  @Autowired
   private ReservationRepository reservationRepository;
+
+  private EmailServiceImpl emailService;
+
+  @Override
+  public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
+    Reservation reservation = reservationRepository.findByRoomId(roomId);
+    if (startDate.isBefore(reservation.getCheckOutDate()) && endDate.isAfter(reservation.getCheckInDate())) {
+      return false;
+    }
+    return true;
+  }
 
   @Override
   public Reservation createReservation(Reservation reservation) {
-    return reservationRepository.save(reservation);
+    if (isRoomAvailable(reservation.getRoom().getId(), reservation.getCheckInDate(), reservation.getCheckOutDate())) {
+      return reservationRepository.save(reservation);
+    } else {
+      throw new RoomNotAvailableException();
+    }
   }
 
   @Override
@@ -49,6 +65,15 @@ public class ReservationServiceImpl implements ReservationService {
   @Override
   public void deleteReservation(Long id) {
     reservationRepository.deleteById(id);
+  }
+
+  @Override
+  public void sentConfirmationEmail(Reservation reservation) {
+    String to = reservation.getClient().getEmail();
+    String subject = "Confirmação de Reserva";
+    String text = "Sua reserva foi confirmada. Detalhes: " + reservation.toString();
+    EmailDTO emailDTO = new EmailDTO(to, subject, text);
+    emailService.sendMail(emailDTO);
   }
 
 }

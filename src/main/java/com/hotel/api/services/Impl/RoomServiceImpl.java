@@ -2,9 +2,9 @@ package com.hotel.api.services.Impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hotel.api.dtos.data.RoomDataDTO;
 import com.hotel.api.entities.Room;
 import com.hotel.api.repositories.RoomRepository;
 import com.hotel.api.services.RoomService;
@@ -17,12 +17,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
-  @Autowired
   private RoomRepository roomRepository;
 
   @Override
-  public Room createRoom(Room room) {
-    return roomRepository.save(room);
+  public Room createRoom(RoomDataDTO room) {
+    return roomRepository.save(room.toEntity());
   }
 
   @Override
@@ -40,10 +39,10 @@ public class RoomServiceImpl implements RoomService {
   }
 
   @Override
-  public Room updateRoom(Long id, Room room) {
-    Room updatedRoom;
-    updatedRoom = roomRepository.save(room);
-    return updatedRoom;
+  public void updateRoom(Long id, RoomDataDTO roomDTO) {
+    Room updatedClient = roomDTO.toEntity();
+    updatedClient.setId(id);
+    roomRepository.save(updatedClient);
   }
 
   @Override

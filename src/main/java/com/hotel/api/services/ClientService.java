@@ -2,16 +2,18 @@ package com.hotel.api.services;
 
 import java.util.List;
 
+import com.hotel.api.dtos.ClientDTO;
+import com.hotel.api.dtos.data.ClientDataDTO;
 import com.hotel.api.entities.Client;
 
 public interface ClientService {
-  public Client createClient(Client client);
+  public void createClient(ClientDataDTO client);
 
-  public Client getClient(Long id);
+  public Client getClientById(Long id);
 
-  public List<Client> getAllClients();
+  public List<ClientDTO> getAllClients();
 
-  public Client updateClient(Long id, Client client);
+  public void updateClient(Long id, ClientDataDTO clientDTO);
 
   public void deleteClient(Long id);
 }
