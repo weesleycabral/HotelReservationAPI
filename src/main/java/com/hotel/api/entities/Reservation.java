@@ -38,7 +38,8 @@ public class Reservation {
   @Column(name = "checkOutDate")
   private LocalDate checkOutDate;
 
-  public Reservation(LocalDate checkIn, LocalDate checkOut) {
+  public Reservation(Room room, LocalDate checkIn, LocalDate checkOut) {
+    this.room = room;
     this.checkInDate = checkIn;
     this.checkOutDate = checkOut;
   }
