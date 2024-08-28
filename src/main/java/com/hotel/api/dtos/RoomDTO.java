@@ -26,7 +26,7 @@ public class RoomDTO {
     return new RoomDTO(room.getId(), room.getRoomNumber(), room.getRoomType(), room.isAvailable());
   }
 
-  public static List<RoomDTO> toDTOs(List<Room> client) {
-    return client.stream().map(RoomDTO::toDTO).toList();
+  public static List<RoomDTO> toDTOs(List<Room> room) {
+    return room.stream().map(RoomDTO::toDTO).toList();
   }
 }
