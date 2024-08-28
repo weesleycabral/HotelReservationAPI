@@ -3,9 +3,11 @@ package com.hotel.api.services.Impl;
 import java.util.List;
 import java.time.LocalDate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hotel.api.dtos.EmailDTO;
+import com.hotel.api.dtos.data.ReservationDataDTO;
 import com.hotel.api.entities.Reservation;
 import com.hotel.api.exceptions.RoomNotAvailableException;
 import com.hotel.api.repositories.ReservationRepository;
@@ -19,23 +21,29 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
 
+  @Autowired
   private ReservationRepository reservationRepository;
 
+  @Autowired
   private EmailServiceImpl emailService;
 
   @Override
   public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
-    Reservation reservation = reservationRepository.findByRoomId(roomId);
-    if (startDate.isBefore(reservation.getCheckOutDate()) && endDate.isAfter(reservation.getCheckInDate())) {
-      return false;
+    List<Reservation> reservations = reservationRepository.findByRoomId(roomId);
+    for (Reservation reservation : reservations) {
+      if (startDate.isBefore(reservation.getCheckOutDate()) && endDate.isAfter(reservation.getCheckInDate())) {
+        return false;
+      }
     }
     return true;
   }
 
   @Override
-  public Reservation createReservation(Reservation reservation) {
-    if (isRoomAvailable(reservation.getRoom().getId(), reservation.getCheckInDate(), reservation.getCheckOutDate())) {
-      return reservationRepository.save(reservation);
+  public void createReservation(ReservationDataDTO reservation) {
+    if (isRoomAvailable(reservation.room().getId(), reservation.checkIn(), reservation.checkOut())) {
+      Reservation reservationToEntity = reservation.toEntity();
+      reservationRepository.save(reservationToEntity);
+      sentConfirmationEmail(reservationToEntity);
     } else {
       throw new RoomNotAvailableException();
     }
@@ -56,14 +64,19 @@ public class ReservationServiceImpl implements ReservationService {
   }
 
   @Override
-  public Reservation updateReservation(Long id, Reservation reservation) {
-    Reservation updatedReservation;
-    updatedReservation = reservationRepository.save(reservation);
-    return updatedReservation;
+  public void updateReservation(Long id, ReservationDataDTO reservation) {
+    Reservation updatedReservation = reservation.toEntity();
+    updatedReservation.setId(id);
+    reservationRepository.save(updatedReservation);
   }
 
   @Override
-  public void deleteReservation(Long id) {
+  public void deleteAllReservations() {
+    reservationRepository.deleteAll();
+  }
+
+  @Override
+  public void deleteReservationById(Long id) {
     reservationRepository.deleteById(id);
   }
 

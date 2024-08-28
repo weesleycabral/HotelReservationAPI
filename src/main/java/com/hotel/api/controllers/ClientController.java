@@ -52,10 +52,16 @@ public class ClientController {
     clientService.updateClient(id, clientDTO);
   }
 
+  @DeleteMapping("/delete")
+  @ResponseStatus(value = HttpStatus.NO_CONTENT)
+  public void deleteAllClients() {
+    clientService.deleteAllClients();
+  }
+
   @DeleteMapping("/delete/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteClient(@PathVariable("id") Long id) {
-    clientService.deleteClient(id);
+    clientService.deleteClientById(id);
   }
 
 }

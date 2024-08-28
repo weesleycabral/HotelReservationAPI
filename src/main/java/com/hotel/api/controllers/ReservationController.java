@@ -11,48 +11,47 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hotel.api.dtos.data.RoomDataDTO;
-import com.hotel.api.entities.Room;
-import com.hotel.api.services.RoomService;
+import com.hotel.api.dtos.data.ReservationDataDTO;
+import com.hotel.api.entities.Reservation;
+import com.hotel.api.services.ReservationService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/room")
+@RequestMapping("/api/v1/reservation")
 @AllArgsConstructor
-public class RoomController {
-
-  private final RoomService roomService;
+public class ReservationController {
+  private final ReservationService reservationService;
 
   @GetMapping("/list")
   @ResponseStatus(value = HttpStatus.OK)
-  public List<Room> getAllRooms() {
-    return roomService.getAllRooms();
+  public List<Reservation> getAllReservations() {
+    return reservationService.getAllReservations();
   }
 
   @PostMapping("/new")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public void createRoom(@RequestBody RoomDataDTO roomDTO) {
-    roomService.createRoom(roomDTO);
+  public void createReservation(@RequestBody ReservationDataDTO reservationDTO) {
+    reservationService.createReservation(reservationDTO);
   }
 
   @PostMapping("/update/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void updateRoom(@PathVariable("id") Long id, @Valid @RequestBody RoomDataDTO rDataDTO) {
-    roomService.updateRoom(id, rDataDTO);
+  public void updateReservation(@PathVariable("id") Long id, @Valid @RequestBody ReservationDataDTO rDataDTO) {
+    reservationService.updateReservation(id, rDataDTO);
   }
 
   @PostMapping("/delete")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void deleteAllRooms() {
-    roomService.deleteAllRooms();
+  public void deleteAllReservations() {
+    reservationService.deleteAllReservations();
   }
 
   @PostMapping("/delete/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void deleteRoom(@PathVariable("id") Long id) {
-    roomService.deleteRoomById(id);
+  public void deleteReservation(@PathVariable("id") Long id) {
+    reservationService.deleteReservationById(id);
   }
 
 }
