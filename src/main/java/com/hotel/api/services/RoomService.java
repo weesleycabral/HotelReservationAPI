@@ -14,5 +14,7 @@ public interface RoomService {
 
   public void updateRoom(Long id, RoomDataDTO room);
 
-  public void deleteRoom(Long id);
+  public void deleteAllRooms();
+
+  public void deleteRoomById(Long id);
 }

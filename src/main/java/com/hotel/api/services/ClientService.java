@@ -15,5 +15,7 @@ public interface ClientService {
 
   public void updateClient(Long id, ClientDataDTO clientDTO);
 
-  public void deleteClient(Long id);
+  public void deleteAllClients();
+
+  public void deleteClientById(Long id);
 }

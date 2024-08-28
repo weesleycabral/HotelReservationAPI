@@ -2,10 +2,12 @@ package com.hotel.api.services.Impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hotel.api.dtos.data.RoomDataDTO;
 import com.hotel.api.entities.Room;
+import com.hotel.api.exceptions.RoomAlreadyExistsException;
 import com.hotel.api.repositories.RoomRepository;
 import com.hotel.api.services.RoomService;
 
@@ -17,11 +19,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
+  @Autowired
   private RoomRepository roomRepository;
 
   @Override
-  public Room createRoom(RoomDataDTO room) {
-    return roomRepository.save(room.toEntity());
+  public Room createRoom(RoomDataDTO roomDataDTO) {
+    Room existingRoom = roomRepository.findByRoomNumber(roomDataDTO.roomNumber());
+    if (existingRoom != null) {
+      throw new RoomAlreadyExistsException();
+    }
+    return roomRepository.save(roomDataDTO.toEntity());
   }
 
   @Override
@@ -46,7 +53,12 @@ public class RoomServiceImpl implements RoomService {
   }
 
   @Override
-  public void deleteRoom(Long id) {
+  public void deleteAllRooms() {
+    roomRepository.deleteAll();
+  }
+
+  @Override
+  public void deleteRoomById(Long id) {
     roomRepository.deleteById(id);
   }
 

@@ -46,11 +46,15 @@ public class ClientServiceImpl implements ClientService {
     Client updatedClient = clientDTO.toEntity();
     updatedClient.setId(id);
     clientRepository.save(updatedClient);
-
   }
 
   @Override
-  public void deleteClient(Long id) {
+  public void deleteAllClients() {
+    clientRepository.deleteAll();
+  }
+
+  @Override
+  public void deleteClientById(Long id) {
     clientRepository.deleteById(id);
   }
 
